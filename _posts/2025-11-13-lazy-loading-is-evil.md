@@ -1,5 +1,6 @@
 ---
 title: Lazy Loading is Evil
+description: How a common ORM anti-pattern affects your backend
 date: 2025-11-13
 tags: [Coupling]
 ---
