@@ -1,13 +1,12 @@
 ---
-title: Lazy loading is evil
+title: Lazy Loading is Evil
 date: 2025-11-13
-categories: [Talks]
 tags: [Coupling]
 ---
 
 I assumed everyone already agreed that lazy loading was not a great idea, especially for those of us dealing with ORMs and domain models, but a recent conversation reminded me that's far from true, so here we are again.
 
-## What is lazy loading?
+## What is Lazy Loading?
 
 Lazy loading, in the backend context, is a pattern typically provided by ORMs. Basically, instead of loading all related data from the database upfront, you delay fetching certain parts until they're actually needed.
 
@@ -29,7 +28,7 @@ We don't bring them from the database until we need them. In other words, the it
 
 Why would you want to load the items in lazy mode? You might think, "well, sometimes I don't really need the items. I only need the container, so why execute a heavy query for something I won't need?". You expect to gain performance by loading less data, which sounds great on papers, but that's where the trouble begins
 
-## Lazy loading couple use cases
+## Lazy Loading Couple Use Cases
 
 The fact that you sometimes need a property and sometimes don't is a red flag. It means you're using **the same model for different use cases**.
 
@@ -37,7 +36,7 @@ This couples those use cases together, making your code harder to change, test, 
 
 When everything is built around a single, multipurpose model, you are more likely to end up in a mess.
 
-## Lazy loading lies!
+## Lazy Loading Lies!
 
 When you call `items()`, you might assume those items are already there. But under the hood, a potentially heavy database query is triggered to fetch those items.
 
