@@ -5,16 +5,18 @@ date: 2025-11-13
 tags: [Coupling]
 ---
 
-I assumed everyone already agreed that lazy loading was not a great idea, especially for those of us dealing with ORMs and domain models, but a recent conversation reminded me that's far from true, so here we are again.
+I assumed everyone already agreed that lazy loading was not a great idea, especially those of us dealing with ORMs and domain models, but a recent conversation reminded me that's far from true, so here we are again.
 
 ## What is Lazy Loading?
 
-Lazy loading, in the backend context, is a pattern typically provided by ORMs. Basically, instead of loading all related data from the database upfront, you delay fetching certain parts until they're actually needed.
+Lazy loading, in the backend context, is a pattern typically used when dealing with ORMs. Basically, instead of loading all related data from the database upfront, you delay fetching certain parts until they're actually needed.
 
 Here's an example:
 
 ```
 class Container {
+  private String name;
+  
 	@Lazy
 	private List<Items> items;
 
@@ -24,10 +26,11 @@ class Container {
 }
 ```
 
-When you retrieve this `Container` entity from the database, the inner `Items` are not there yet. The query to fetch them will only execute once you call `container.items()`.
-We don't bring them from the database until we need them. In other words, the items are loaded on demand, not upfront.
+When you retrieve a `Container` entity from the database, the `name` is being fetched upfront, but the inner `items` are not. The query to fetch them will only execute once you call `container.items()`.
+This means we don't bring them from the database until we need them, so the items are loaded on demand, not upfront.
 
-Why would you want to load the items in lazy mode? You might think, "well, sometimes I don't really need the items. I only need the container, so why execute a heavy query for something I won't need?". You expect to gain performance by loading less data, which sounds great on papers, but that's where the trouble begins
+Now, why would you want to load the items in lazy mode?
+You might think, "well, sometimes I don't really need the items. I only need the container with its name, so why execute a heavy query for something I won't need?". You expect to gain performance by loading fewer data, which sounds great on papers, but that's where the trouble begins
 
 ## Lazy Loading Couple Use Cases
 
@@ -41,8 +44,8 @@ When everything is built around a single, multipurpose model, you are more likel
 
 When you call `items()`, you might assume those items are already there. But under the hood, a potentially heavy database query is triggered to fetch those items.
 
-This hidden behavior makes it dangerously easy to fall into the N+1 query problem, causing a performance meltdown in production.
-Worse, you now have to know beforehand how calling `items()` works internally to avoid these issues, which breaks encapsulation, because now I'm forced to look inside and know how something is loaded in order to avoid failure, something that should be an implementation detail. That implementation detail leaks into the rest of your codebase, because suddenly calling a simple method requires you internal knowledge to avoid disaster.
+This hidden behavior makes it dangerously easy to fall into the `N+1` query problem, causing a performance meltdown in production.
+Even worse, you now have to know beforehand how calling `items()` works internally to avoid these issues. This breaks encapsulation, because you're forced to look inside and know how something is loaded just to prevent failure, something that should be an implementation detail. That implementation detail leaks into the rest of your codebase, because suddenly calling a simple method requires internal knowledge to avoid disaster.
 
 Your application becomes fragile. It's easier to make a wrong choice and break the system in an unexpected way. For example, if someone naively would remove the lazy loading, might cause cascading failures. In order to make those changes, You'd have to hunt down every place where those items are accessed to assess the impact. That's risky, time-consuming, and unnecessary work.
 
