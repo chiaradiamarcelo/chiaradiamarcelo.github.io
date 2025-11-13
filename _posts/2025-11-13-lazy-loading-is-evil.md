@@ -47,7 +47,7 @@ When you call `items()`, you might assume those items are already there. But und
 This hidden behavior makes it dangerously easy to fall into the `N+1` query problem, causing a performance meltdown in production.
 Even worse, you now have to know beforehand how calling `items()` works internally to avoid these issues. This breaks encapsulation, because you're forced to look inside and know how something is loaded just to prevent failure, something that should be an implementation detail. That implementation detail leaks into the rest of your codebase, because suddenly calling a simple method requires internal knowledge to avoid disaster.
 
-Your application becomes fragile. It's easier to make a wrong choice and break the system in an unexpected way. For example, if someone naively would remove the lazy loading, might cause cascading failures. In order to make those changes, You'd have to hunt down every place where those items are accessed to assess the impact. That's risky, time-consuming, and unnecessary work.
+Your application becomes more fragile. It's easier to make a wrong choice and break the system in unexpected ways. For example, if someone were to naively remove lazy loading, might cause cascading failures. To make such changes, you'd have to hunt down every place where those items are accessed to assess the impact. That's risky, time-consuming, and unnecessary work.
 
 ## Where the Problem Comes From?
 
