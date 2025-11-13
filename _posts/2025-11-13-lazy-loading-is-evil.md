@@ -59,7 +59,7 @@ Frameworks often provide "fixes" for problems that shouldn't exist in the first 
 
 The need for lazy loading is usually a **symptom of a deeper design issue**.
 
-If you need to sometimes load a property and sometimes not, you'll be better off making those scenarios explicit. Separate your models. Use different models for different purposes. Moving things that change for different reasons and at different times apart.
+If you sometimes need to load a property and other times don't, you'll be better off making those scenarios explicit. Separate your models, and use different models for different purposes. Move things that change for different reasons and at different times apart.
 
 You can create different models that contain only the properties you need.
 For example in a CQRS context, you typically separate your write models (which enforce invariants and consistency) from your read models (which are optimized for queries and reports). You do that because **they serve different purposes**.
@@ -68,7 +68,7 @@ Imagine a restaurant system:
 - To book a table (write), you need a model that ensures domain rules and consistency.
 - To generate a report of how many tables were booked last month (read), you need a model optimized for reading, and not necessarily enforcing rules.
 
-When you make this distinction explicit, lazy loading becomes unnecessary. Models that need data will load it upfront, and models that don't need it simply won't know that data even exists.
+When you make this distinction explicit, lazy loading becomes unnecessary. Models that need data will load it upfront, while models that don't need it simply won't even know that data exists.
 
 ## Final Thoughts
 
