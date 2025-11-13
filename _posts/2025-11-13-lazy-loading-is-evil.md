@@ -1,0 +1,74 @@
+---
+title: Lazy loading is evil
+date: 2025-11-13
+categories: [Talks]
+tags: [Coupling]
+---
+
+I assumed everyone already agreed that lazy loading was not a great idea, especially for those of us dealing with ORMs and domain models, but a recent conversation reminded me that's far from true, so here we are again.
+
+## What is lazy loading?
+
+Lazy loading, in the backend context, is a pattern typically provided by ORMs. Basically, instead of loading all related data from the database upfront, you delay fetching certain parts until they're actually needed.
+
+Here's an example:
+
+```
+class Container {
+	@Lazy
+	private List<Items> items;
+
+	public List<Items> items() {
+		return items;
+	}
+}
+```
+
+When you retrieve this `Container` entity from the database, the inner `Items` are not there yet. The query to fetch them will only execute once you call `container.items()`.
+We don't bring them from the database until we need them. In other words, the items are loaded on demand, not upfront.
+
+Why would you want to load the items in lazy mode? You might think, "well, sometimes I don't really need the items. I only need the container, so why execute a heavy query for something I won't need?". You expect to gain performance by loading less data, which sounds great on papers, but that's where the trouble begins
+
+## Lazy loading couple use cases
+
+The fact that you sometimes need a property and sometimes don't is a red flag. It means you're using **the same model for different use cases**.
+
+This couples those use cases together, making your code harder to change, test, and evolve. You lose clarity about what each part of the system is supposed to do, and it's also riskier, because a change meant for one scenario can easily have unexpected effects on another.
+
+When everything is built around a single, multipurpose model, you are more likely to end up in a mess.
+
+## Lazy loading lies!
+
+When you call `items()`, you might assume those items are already there. But under the hood, a potentially heavy database query is triggered to fetch those items.
+
+This hidden behavior makes it dangerously easy to fall into the N+1 query problem, causing a performance meltdown in production.
+Worse, you now have to know beforehand how calling `items()` works internally to avoid these issues, which breaks encapsulation, because now I'm forced to look inside and know how something is loaded in order to avoid failure, something that should be an implementation detail. That implementation detail leaks into the rest of your codebase, because suddenly calling a simple method requires you internal knowledge to avoid disaster.
+
+Your application becomes fragile. It's easier to make a wrong choice and break the system in an unexpected way. For example, if someone naively would remove the lazy loading, might cause cascading failures. In order to make those changes, You'd have to hunt down every place where those items are accessed to assess the impact. That's risky, time-consuming, and unnecessary work.
+
+## Where the Problem Comes From?
+
+I think a big part of this is, as usual, frameworks. They make it easy to do questionable stuff, and even promote them as best practices.
+
+Frameworks often provide "fixes" for problems that shouldn't exist in the first place. Developers struggle to analyze trade-offs, and as result they build a fragile system, where even a small change can bring production down (true story unfortunately).
+
+## Make Explicit the Implicit
+
+The need for lazy loading is usually a **symptom of a deeper design issue**.
+
+If you need to sometimes load a property and sometimes not, you'll be better off making those scenarios explicit. Separate your models. Use different models for different purposes. Moving things that change for different reasons and at different times apart.
+
+You can create different models that contain only the properties you need.
+For example in a CQRS context, you typically separate your write models (which enforce invariants and consistency) from your read models (which are optimized for queries and reports). You do that because **they serve different purposes**.
+
+Imagine a restaurant system:
+- To book a table (write), you need a model that ensures domain rules and consistency.
+- To generate a report of how many tables were booked last month (read), you need a model optimized for reading, and not necessarily enforcing rules.
+
+When you make this distinction explicit, lazy loading becomes unnecessary. Models that need data will load it upfront, and models that don't need it simply won't know that data even exists.
+
+## Final Thoughts
+
+Next time you feel tempted to use lazy loading, stop and ask yourself, are you solving a real problem or just hiding a design flaw?
+
+Lazy loading is a band-aid for coupling. Make the implicit explicit, and your system (and your future self) will thank you.
