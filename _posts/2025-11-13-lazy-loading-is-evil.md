@@ -32,7 +32,7 @@ This means we don't bring them from the database until we need them, so the item
 Now, why would you want to load the items in lazy mode?
 You might think, "well, sometimes I don't really need the items. I only need the container with its name, so why execute a heavy query for something I won't need?". You expect to gain performance by loading less data, which sounds great on paper, but that's where the trouble begins
 
-## So, What's the Problem?
+## What's the Problem?
 
 ### Lazy Loading Couple Use Cases
 
