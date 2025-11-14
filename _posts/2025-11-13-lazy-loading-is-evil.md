@@ -34,7 +34,7 @@ You might think, "well, sometimes I don't really need the items. I only need the
 
 ## What's the Problem?
 
-### Lazy Loading Couple Use Cases
+### Lazy Loading Couples Use Cases
 
 The fact that you sometimes need a property and sometimes don't is a red flag. It means you're using **the same model for different use cases**.
 
