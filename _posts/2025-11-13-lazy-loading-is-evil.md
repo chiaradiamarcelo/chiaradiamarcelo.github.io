@@ -26,11 +26,11 @@ class Container {
 }
 ```
 
-When you retrieve a `Container` entity from the database, the `name` is being fetched upfront, but the inner `items` are not. The query to fetch them will only execute once you call `container.items()`.
+When you retrieve a `Container` entity from the database, the `name` is fetched upfront, but the inner `items` are not. The query to fetch them will only execute once you call `container.items()`.
 This means we don't bring them from the database until we need them, so the items are loaded on demand, not upfront.
 
 Now, why would you want to load the items in lazy mode?
-You might think, "well, sometimes I don't really need the items. I only need the container with its name, so why execute a heavy query for something I won't need?". You expect to gain performance by loading less data, which sounds great on paper, but that's where the trouble begins
+You might think, "well, sometimes I don't really need the items. I only need the container with its name, so why execute a heavy query for something I won't need?". You expect to gain performance by loading less data, which sounds great on paper, but that's where the trouble begins.
 
 ## What's the Problem?
 
@@ -51,7 +51,7 @@ Even worse, you now have to know beforehand how calling `items()` works internal
 
 This breaks encapsulation, because you're forced to look inside and know how something is loaded just to prevent failure, something that should be an implementation detail. That implementation detail leaks into the rest of your codebase, because suddenly calling a simple method requires internal knowledge to avoid disaster.
 
-Your application becomes more fragile. It's easier to make a wrong choice and break the system in unexpected ways. For example, if someone were to naively remove lazy loading, might cause cascading failures. To make such changes, you'd have to hunt down every place where those items are accessed to assess the impact. That's risky, time-consuming, and unnecessary work.
+Your application becomes more fragile. It's easier to make a wrong choice and break the system in unexpected ways. For example, if someone were to naively remove lazy loading, it might cause cascading failures. To make such changes, you'd have to hunt down every place where those items are accessed to assess the impact. That's risky, time-consuming, and unnecessary work.
 
 ## Where the Problem Comes From?
 
