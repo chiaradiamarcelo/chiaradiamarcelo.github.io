@@ -17,12 +17,12 @@ Here's an example:
 class Container {
   private String name;
   
-	@Lazy
-	private List<Items> items;
+  @Lazy
+  private List<Items> items;
 
-	public List<Items> items() {
-		return items;
-	}
+  public List<Items> items() {
+    return items;
+  }
 }
 ```
 
