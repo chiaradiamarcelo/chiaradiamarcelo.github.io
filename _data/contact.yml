@@ -1,5 +1,9 @@
 #  The contact options.
 
+- type: linkedin
+  icon: "fab fa-linkedin"
+  url: https://www.linkedin.com/in/marcelo-chiaradia/
+
 - type: github
   icon: "fab fa-github"
 
